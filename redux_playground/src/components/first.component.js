@@ -6,6 +6,7 @@ let First = (props) => {
   useEffect(() => {
     console.log("first", props);
     props.setAppData({ path: "val2", value: "Hello from first" });
+    props.setAppData({ path: "val3", value: "Hello from first again" });
   }, []);
   return <div>First component</div>;
 };
