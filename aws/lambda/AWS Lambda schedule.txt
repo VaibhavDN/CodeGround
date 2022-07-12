@@ -1,0 +1,9 @@
+docker run --rm -it -p 4566:4566 -p 4510-4559:4510-4559 localstack/localstack
+awslocal --endpoint-url=http://localhost:4566 lambda create-function --function-name data-update-lambda --zip-file fileb://function.zip --handler file.handler --runtime nodejs16.x --role arn:aws:iam::000000000000:role/lambda-role
+awslocal lambda list-functions --max-items 10
+awslocal lambda invoke --function-name data-update-lambda out --log-type Tail
+LogResult can be verified by decoding base64 https://www.base64decode.org/
+awslocal events put-rule --name ScheduleRule --schedule-expression cron(1 0 * * ? *)
+awslocal lambda add-permission --function-name data-update-lambda --statement-id scheduled-event --action lambda:InvokeFunction --principal events.amazonaws.com --source-arn arn:aws:events:us-east-1:000000000000:rule/ScheduleRule
+awslocal events put-targets --rule ScheduleRule --targets file://targets.json
+awslocal events disable-rule --name ScheduleRule
